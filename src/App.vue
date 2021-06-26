@@ -53,6 +53,7 @@ export default {
       turnCounter: 0,
       good: true,
       compTurn: false,
+      on: false,
       msg: '',
 
     }
@@ -62,26 +63,24 @@ export default {
       let easy = document.getElementById("easy");
       if (easy.checked == true) {
         this.timeout = 1500;
-        return this.timeout
       }
     },
     normal() {
       let normal = document.getElementById("normal");
       if (normal.checked == true) {
         this.timeout = 1000;
-        return this.timeout
       }
     },
     hard() {
       let hard = document.getElementById("hard");
       if (hard.checked == true) {
         this.timeout = 400;
-        return this.timeout
       }
     },
     start() {
       this.clearColor();
       this.msg = '';
+      this.on = true;
       clearInterval(this.intervalId);
       this.play();
     },
@@ -98,7 +97,8 @@ export default {
         this.order.push(Math.floor(Math.random() * 4) + 1);
       }
       this.compTurn = true;
-      this.intervalId = setInterval(this.gameTurn, this.timeout)
+      this.intervalId = setInterval(this.gameTurn, this.timeout);
+      this.clearColor()
     },
     clearColor() {
       let sGreen = document.getElementById("s-green");
@@ -114,10 +114,13 @@ export default {
       sBlue.style.backgroundColor = "darkblue";
     },
     gameTurn() {
+      this.on = false;
+
       if (this.flash == this.count) {
         clearInterval(this.intervalId);
         this.compTurn = false;
-        this.clearColor()
+        this.clearColor();
+        this.on = true;
       }
       if (this.compTurn) {
         this.clearColor();
@@ -127,92 +130,111 @@ export default {
           if (this.order[this.flash] == 3) this.three();
           if (this.order[this.flash] == 4) this.four();
           this.flash++;
-        }, 800)
+        }, 400);
+      }
+    },
+    audioBtn(clip) {
+      if (this.noise) {
+        let audio = document.getElementById(clip);
+        audio.play()
       }
     },
     one() {
-      if (this.noise) {
-        let audio = document.getElementById("clip1");
-        audio.play()
-      }
+     this.audioBtn("clip1");
       this.noise = true;
       let sGreen = document.getElementById("s-green");
       sGreen.style.backgroundColor = "lightgreen";
     },
     two() {
-      if (this.noise) {
-        let audio = document.getElementById("clip2");
-        audio.play()
-      }
+      this.audioBtn("clip2");
       this.noise = true;
       let sRed = document.getElementById("s-red");
       sRed.style.backgroundColor = "red";
     },
     three() {
-      if (this.noise) {
-        let audio = document.getElementById("clip3");
-        audio.play()
-      }
+      this.audioBtn("clip3");
       this.noise = true;
       let sYellow = document.getElementById("s-yellow");
       sYellow.style.backgroundColor = "yellow";
     },
     four() {
-      if (this.noise) {
-        let audio = document.getElementById("clip4");
-        audio.play()
-      }
+      this.audioBtn("clip4");
       this.noise = true;
       let sBlue = document.getElementById("s-blue");
       sBlue.style.backgroundColor = "blue";
     },
     redPress() {
-      this.press(2, this.two)
-    },
-    bluePress() {
-      this.press(4, this.four)
-    },
-    yellowPress() {
-      this.press(3, this.three)
-    },
-    greenPress() {
-      this.press(1, this.one)
-    },
-    press(num, change) {
-      this.playOrder.push(num);
-      this.check();
-      change();
-      if (!this.win) {
+      this.press(2, this.two());
+      if (this.on == false) {
         setTimeout(() => {
           this.clearColor();
-        }, 800);
+        }, 400);
+      }
+    },
+    bluePress() {
+      this.press(4, this.four());
+      if (this.on == false) {
+        setTimeout(() => {
+          this.clearColor();
+        }, 400);
+      }
+    },
+    yellowPress() {
+      this.press(3, this.three());
+      if (this.on == false) {
+        setTimeout(() => {
+          this.clearColor();
+        }, 400);
+      }
+    },
+    greenPress() {
+      this.press(1, this.one());
+      if (this.on == false) {
+        setTimeout(() => {
+          this.clearColor();
+        }, 400);
+      }
+    },
+    press(num, change) {
+      if (this.on == true) {
+        this.playOrder.push(num);
+        this.check();
+        change;
+        if (!this.win) {
+          setTimeout(() => {
+            this.clearColor();
+          }, 400);
+        }
       }
     },
     check() {
-      if (this.playOrder[this.playOrder.length -1] !== this.order[this.playOrder.length -1]) {
-        this.good = false
-      }
+      if (this.playOrder[this.playOrder.length - 1] !== this.order[this.playOrder.length - 1])
+        this.good = false;
+
       if (this.playOrder.length == 20 && this.good) {
         this.winGame();
       }
       if (this.good == false) {
         this.msg = 'Вы проиграли после' + this.turnCounter + 'раундов :(';
-        this.noise = false;
-        this.play()
+        this.clearColor();
+        this.play();
+        this.noise = false
       }
-      if (this.count == this.playOrder && this.good && !this.win  ) {
+
+      if (this.count == this.playOrder.length && this.good && !this.win  ) {
         this.count++;
         this.playOrder = [];
         this.compTurn = true;
         this.flash = 0;
         this.turnCounter = this.count;
-        this.intervalId = setInterval(this.gameTurn, 800)
+        this.intervalId = setInterval(this.gameTurn, 1100);
       }
 
     },
     winGame() {
-      this.msg = 'Вы победилиБ поздравляю! Я вот ни разу не смог';
+      this.msg = 'Вы победили, поздравляю!';
       this.win = true;
+      this.on = false;
     }
 
   }
@@ -273,7 +295,8 @@ h1{
     border-radius: 15px;
     background-color: sandybrown;
     margin-top: 10px;
-    padding: 10px 40px;
+    padding: 10px 20px;
+    margin-right: 10px;
   }
   .btn-start:hover{background-color: orange}
 .btn-start:active{background-color: darkorange}
