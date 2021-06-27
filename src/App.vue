@@ -13,18 +13,21 @@
         <div class="sector s-blue" id="s-blue" @click="bluePress"></div>
       </div>
 
-      <div class="game">
+      <div class="game-set">
         <div class="game-info">
-          <span class="count">Раунд:</span>
+          <span class="count">Раунд: </span>
           <span class="count" id="counter">{{turnCounter}}</span><br>
           <button class="btn-start" value="start" @click="start">Старт</button>
           <div>{{msg}}</div>
         </div>
         <div class="game-options">
           <h2>Уровень сложности:</h2>
-            <input type="radio"  name="option" id="easy" @click="easy">Легкий<br>
-            <input type="radio" name="option" id="normal" @click="normal" checked>Средний<br>
-            <input type="radio" name="option" id="hard" @click="hard">Сложный<br>
+          <label class="option"><input type="radio"  name="option" id="easy" @click="easy">Легкий</label>
+          <br>
+          <label class="option"><input type="radio" name="option" id="normal" @click="normal" checked>Средний</label>
+          <br>
+          <label class="option"><input type="radio" name="option" id="hard" @click="hard">Сложный</label>
+          <br>
         </div>
       </div>
 
@@ -130,7 +133,7 @@ export default {
           if (this.order[this.flash] == 3) this.three();
           if (this.order[this.flash] == 4) this.four();
           this.flash++;
-        }, 400);
+        }, 300);
       }
     },
     audioBtn(clip) {
@@ -215,9 +218,8 @@ export default {
         this.winGame();
       }
       if (this.good == false) {
-        this.msg = 'Вы проиграли после' + this.turnCounter + 'раундов :(';
+        this.msg = 'Вы проиграли после ' + this.turnCounter + ' раундов :(';
         this.clearColor();
-        this.play();
         this.noise = false
       }
 
@@ -227,7 +229,7 @@ export default {
         this.compTurn = true;
         this.flash = 0;
         this.turnCounter = this.count;
-        this.intervalId = setInterval(this.gameTurn, 1100);
+        this.intervalId = setInterval(this.gameTurn, this.timeout);
       }
 
     },
@@ -260,9 +262,9 @@ h1{
   justify-content: space-around;
   align-items: center;
 }
-.game{
+.game-set{
   text-align: left;
-  padding-left: 50px;
+  padding-left: 40px;
 }
 .simon{
   display: flex;
@@ -303,4 +305,77 @@ h1{
   .count{
     font-size: 36px;
   }
+input{
+  width: 16px;
+  height: 16px;
+}
+.option{
+  font-size: 22px;
+}
+
+//media
+
+  @media all and (max-width: 600px){
+    #app{
+       width: 300px;
+      margin: 20px auto;
+    }
+    .flex-main{
+      display: block;
+    }
+    .game-set{
+      padding-left: 0;
+      margin-top: 30px;
+    }
+    h1{
+      font-size: 28px;
+    }
+    .count{
+      font-size: 24px;
+    }
+    .btn-start{
+      font-size: 18px;
+      margin-right: 0;
+      padding: 10px 30px;
+    }
+  }
+
+@media all and (max-width: 300px){
+  #app{
+    width: 250px;
+    margin: 20px auto;
+  }
+  .flex-main{
+    display: block;
+  }
+  .game-set{
+    padding-left: 0;
+    margin-top: 30px;
+  }
+  h1{
+    font-size: 26px;
+  }
+  .count{
+    font-size: 22px;
+  }
+  .btn-start{
+    font-size: 16px;
+    margin-right: 0;
+    padding: 10px 30px;
+  }
+  .simon{
+    width: 250px;
+    height: 250px;
+  }
+  .sector{
+    width: 114px;
+    height: 114px;
+  }
+  h2{
+    font-size: 20px;
+  }
+  .option{
+    font-size: 20px;
+  }
+}
 </style>
